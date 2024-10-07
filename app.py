@@ -2,7 +2,7 @@
 
 import bcrypt
 from flask import Flask, jsonify, request
-from flask_login import LoginManager, current_user, login_user
+from flask_login import LoginManager, current_user, login_required, login_user
 from database import db
 from models.meal import Meal
 from models.user import User
@@ -75,6 +75,7 @@ def login():
 
 
 @app.route("/meal", methods=["POST"])
+@login_required
 def create_meal():
     """Create Meal"""
     data = request.json

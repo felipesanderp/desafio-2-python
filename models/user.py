@@ -10,6 +10,6 @@ class User(db.Model, UserMixin):
 
     # id (int), username (text), password (text), role (text)
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
     meals = relationship("Meal", back_populates="user")
