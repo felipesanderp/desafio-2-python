@@ -2,8 +2,9 @@
 
 import bcrypt
 from flask import Flask, jsonify, request
-from flask_login import LoginManager, login_user
+from flask_login import LoginManager, current_user, login_user
 from database import db
+from models.meal import Meal
 from models.user import User
 
 app = Flask(__name__)
@@ -68,6 +69,32 @@ def login():
             return jsonify({"message": "User authenticated!"})
 
     return jsonify({"message": "Invalid credentials"}), 400
+
+
+# Meals Routes
+
+
+@app.route("/meal", methods=["POST"])
+def create_meal():
+    """Create Meal"""
+    data = request.json
+
+    user_id = current_user.id
+    name = data.get("name")
+    description = data.get("description")
+    inside_diet = data.get("inside_diet")
+
+    if name and description and inside_diet:
+        meal = Meal(
+            user_id=user_id, name=name, description=description, inside_diet=inside_diet
+        )
+
+        db.session.add(meal)
+        db.session.commit()
+
+        return jsonify({"message": "Meal created successfully", "id": meal.id})
+
+    return jsonify({"message": "Dados invalidos"}), 400
 
 
 if __name__ == "__main__":
