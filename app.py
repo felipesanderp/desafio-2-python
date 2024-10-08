@@ -124,6 +124,7 @@ def update_user(id_user):
 @app.route("/user/<string:user_id>", methods=["DELETE"])
 @login_required
 def delete_user(user_id):
+    """Delete user function"""
     user = User.query.get(user_id)
 
     if user_id != current_user.id:
