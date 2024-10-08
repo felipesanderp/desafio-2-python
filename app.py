@@ -2,7 +2,13 @@
 
 import bcrypt
 from flask import Flask, jsonify, request
-from flask_login import LoginManager, current_user, login_required, login_user
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
 from database import db
 from models.meal import Meal
 from models.user import User
@@ -69,6 +75,14 @@ def login():
             return jsonify({"message": "User authenticated!"})
 
     return jsonify({"message": "Invalid credentials"}), 400
+
+
+@app.route("/logout", methods=["GET"])
+@login_required
+def logout():
+    """Funtion to logout a user. Must be login to use this route"""
+    logout_user()
+    return jsonify({"message": "Logout realizado com sucesso!"})
 
 
 # Meals Routes
