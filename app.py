@@ -200,13 +200,27 @@ def update_meal(meal_id):
     """Update meal function"""
     meal = Meal.query.get(meal_id)
 
-    if meal:
+    if meal and meal.user_id == current_user.user_id:
         data = request.json
         meal.name = data.get("name")
         meal.description = data.get("description")
         meal.inside_diet = data.get("inside_diet")
         db.session.commit()
         return jsonify({"message": "Meal updated successfully", "id": meal.id})
+
+    return jsonify({"message": "Dados invalidos"}), 400
+
+
+@app.route("/meal/<string:meal_id>", methods=["DELETE"])
+@login_required
+def delete_meal(meal_id):
+    """Delete meal function"""
+    meal = Meal.query.get(meal_id)
+
+    if meal and meal.user_id == current_user.user.id:
+        db.session.delete(meal)
+        db.session.commit()
+        return jsonify({"message": "Meal deleted successfully"})
 
     return jsonify({"message": "Dados invalidos"}), 400
 
