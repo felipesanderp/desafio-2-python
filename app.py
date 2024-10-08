@@ -165,7 +165,7 @@ def create_meal():
     return jsonify({"message": "Dados invalidos"}), 400
 
 
-@app.route("/meal/<string:meal_id>")
+@app.route("/meal/<string:meal_id>", methods=["GET"])
 @login_required
 def read_meal(meal_id):
     """Function to read meal by id"""
@@ -173,6 +173,40 @@ def read_meal(meal_id):
 
     if meal:
         return jsonify({"message": "Meal fetched successfully", "meal": meal.to_dict()})
+
+    return jsonify({"message": "Dados invalidos"}), 400
+
+
+@app.route("/meals", methods=["GET"])
+@login_required
+def fetch_meals():
+    """Fetch logged user meals"""
+    meals = Meal.query.join(User).filter(User.id == current_user.user_id).all()
+
+    if meals:
+        return jsonify(
+            {
+                "message": "Meals fetched successfully",
+                "meals": [meal.to_dict() for meal in meals],
+            }
+        )
+
+    return jsonify({"message": "Dados invalidos"}), 400
+
+
+@app.route("/meal/<string:meal_id>", methods=["PUT"])
+@login_required
+def update_meal(meal_id):
+    """Update meal function"""
+    meal = Meal.query.get(meal_id)
+
+    if meal:
+        data = request.json
+        meal.name = data.get("name")
+        meal.description = data.get("description")
+        meal.inside_diet = data.get("inside_diet")
+        db.session.commit()
+        return jsonify({"message": "Meal updated successfully", "id": meal.id})
 
     return jsonify({"message": "Dados invalidos"}), 400
 
