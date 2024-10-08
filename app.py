@@ -121,6 +121,22 @@ def update_user(id_user):
     return jsonify({"message": "User not found"}), 404
 
 
+@app.route("/user/<string:user_id>", methods=["DELETE"])
+@login_required
+def delete_user(user_id):
+    user = User.query.get(user_id)
+
+    if user_id != current_user.id:
+        return jsonify({"message": "Action not allowed"}), 403
+
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({"message": f"User {user_id} deleted"})
+
+    return jsonify({"message": "User not found"}), 404
+
+
 # Meals Routes
 
 
