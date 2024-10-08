@@ -165,5 +165,17 @@ def create_meal():
     return jsonify({"message": "Dados invalidos"}), 400
 
 
+@app.route("/meal/<string:meal_id>")
+@login_required
+def read_meal(meal_id):
+    """Function to read meal by id"""
+    meal = Meal.query.get(meal_id)
+
+    if meal:
+        return jsonify({"message": "Meal fetched successfully", "meal": meal.to_dict()})
+
+    return jsonify({"message": "Dados invalidos"}), 400
+
+
 if __name__ == "__main__":
     app.run(debug=True)
