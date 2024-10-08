@@ -97,6 +97,30 @@ def read_user(id_user):
     return jsonify({"message": "Usuario não encontrado"}), 404
 
 
+@app.route("/user/<string:id_user>", methods=["PUT"])
+@login_required
+def update_user(id_user):
+    """Updtae user function"""
+    data = request.json
+    user = User.query.get(id_user)
+
+    if id_user != current_user.id:
+        return jsonify({"message": "Action not allowed"}), 403
+
+    if user and data.get("password"):
+        hashed_password_bytes = bcrypt.hashpw(
+            data.get("password").encode(), bcrypt.gensalt()
+        )
+        hashed_password_string = hashed_password_bytes.decode("utf-8")
+
+        user.password = hashed_password_string
+        db.session.commit()
+
+        return jsonify({"message": f"User {id_user} updated", "id": user.id})
+
+    return jsonify({"message": "User not found"}), 404
+
+
 # Meals Routes
 
 
