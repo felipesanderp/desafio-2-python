@@ -85,6 +85,18 @@ def logout():
     return jsonify({"message": "Logout realizado com sucesso!"})
 
 
+@app.route("/user/<int:id_user>", methods=["GET"])
+@login_required
+def read_user(id_user):
+    """Funtion to get logged user."""
+    user = User.query.get(id_user)
+
+    if user:
+        return {"email": user.email}
+
+    return jsonify({"message": "Usuario não encontrado"}), 404
+
+
 # Meals Routes
 
 
